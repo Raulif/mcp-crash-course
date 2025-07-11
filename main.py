@@ -12,9 +12,7 @@ from mcp.client.stdio import stdio_client
 
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash-001"
-)
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash-001")
 
 stdio_server_params = StdioServerParameters(
     command="python",
@@ -22,18 +20,20 @@ stdio_server_params = StdioServerParameters(
 )
 
 
-
 async def main():
     async with stdio_client(stdio_server_params) as (read, write):
         async with ClientSession(read_stream=read, write_stream=write) as session:
-            await session.initialize();
+            await session.initialize()
             print("session initialize")
             tools = await load_mcp_tools(session)
 
-            agent = create_react_agent(llm,tools)
+            agent = create_react_agent(llm, tools)
 
-            result = await agent.ainvoke({"messages": [HumanMessage(content="What is 3 * 50 + 10?")]})
-            print(result['messages'][-1].content)
-            
+            result = await agent.ainvoke(
+                {"messages": [HumanMessage(content="What is 3 * 50 + 10?")]}
+            )
+            print(result["messages"][-1].content)
+
+
 if __name__ == "__main__":
     asyncio.run(main())
